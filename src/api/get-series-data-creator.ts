@@ -5,6 +5,7 @@ import {
 	CandlestickData,
 	LineData,
 	OhlcData,
+	RectangleData,
 	SeriesDataItemTypeMap,
 	SingleValueData,
 } from '../model/data-consumer';
@@ -17,6 +18,7 @@ import {
 	CandlestickPlotRow,
 	CustomPlotRow,
 	LinePlotRow,
+	RectanglePlotRow,
 	SeriesPlotRow,
 } from '../model/series-data';
 import { SeriesType } from '../model/series-options';
@@ -137,6 +139,43 @@ function candlestickData<HorzScaleItem>(plotRow: CandlestickPlotRow): Candlestic
 	return result;
 }
 
+function rectangleData<HorzScaleItem>(plotRow: RectanglePlotRow): RectangleData<HorzScaleItem> {
+	const result: RectangleData<HorzScaleItem> = {
+		time: plotRow.originalTime as HorzScaleItem,
+		time1: plotRow.originalTime as HorzScaleItem, // Default to original time
+		price1: plotRow.value[PlotRowValueIndex.Open], // Use open as price1
+		time2: plotRow.originalTime as HorzScaleItem, // Default to original time
+		price2: plotRow.value[PlotRowValueIndex.Close], // Use close as price2
+	};
+
+	if (plotRow.time1 !== undefined) {
+		result.time1 = plotRow.time1 as unknown as HorzScaleItem;
+	}
+	if (plotRow.price1 !== undefined) {
+		result.price1 = plotRow.price1;
+	}
+	if (plotRow.time2 !== undefined) {
+		result.time2 = plotRow.time2 as unknown as HorzScaleItem;
+	}
+	if (plotRow.price2 !== undefined) {
+		result.price2 = plotRow.price2;
+	}
+
+	if (plotRow.fillColor !== undefined) {
+		result.fillColor = plotRow.fillColor;
+	}
+
+	if (plotRow.borderColor !== undefined) {
+		result.borderColor = plotRow.borderColor;
+	}
+
+	if (plotRow.customValues !== undefined) {
+		result.customValues = plotRow.customValues;
+	}
+
+	return result;
+}
+
 export function getSeriesDataCreator<TSeriesType extends SeriesType, HorzScaleItem>(seriesType: TSeriesType): (plotRow: SeriesPlotRow<TSeriesType>) => SeriesDataItemTypeMap<HorzScaleItem>[TSeriesType] {
 	const seriesPlotRowToDataMap: SeriesPlotRowToDataMap<HorzScaleItem> = {
 		Area: areaData<HorzScaleItem>,
@@ -145,6 +184,7 @@ export function getSeriesDataCreator<TSeriesType extends SeriesType, HorzScaleIt
 		Histogram: lineData<HorzScaleItem>,
 		Bar: barData<HorzScaleItem>,
 		Candlestick: candlestickData<HorzScaleItem>,
+		Rectangle: rectangleData<HorzScaleItem>,
 		Custom: customData<HorzScaleItem>,
 	};
 	return seriesPlotRowToDataMap[seriesType];

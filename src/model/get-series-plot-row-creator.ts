@@ -7,7 +7,7 @@ import { SeriesPlotRow } from '../model/series-data';
 import { SeriesType } from '../model/series-options';
 import { TimePointIndex } from '../model/time-data';
 
-import { AreaData, BarData, BaselineData, CandlestickData, HistogramData, isWhitespaceData, LineData, SeriesDataItemTypeMap, WhitespaceData } from './data-consumer';
+import { AreaData, BarData, BaselineData, CandlestickData, HistogramData, isWhitespaceData, LineData, RectangleData, SeriesDataItemTypeMap, WhitespaceData } from './data-consumer';
 import { InternalHorzScaleItem } from './ihorz-scale-behavior';
 
 function getColoredLineBasedSeriesPlotRow<HorzScaleItem>(time: InternalHorzScaleItem, index: TimePointIndex, item: LineData | HistogramData, originalTime: HorzScaleItem): Mutable<SeriesPlotRow<'Line' | 'Histogram'>> {
@@ -101,6 +101,31 @@ function getCandlestickSeriesPlotRow<HorzScaleItem>(time: InternalHorzScaleItem,
 	return res;
 }
 
+function getRectangleSeriesPlotRow<HorzScaleItem>(time: InternalHorzScaleItem, index: TimePointIndex, item: RectangleData, originalTime: HorzScaleItem): Mutable<SeriesPlotRow<'Rectangle'>> {
+	// For rectangles, we use the time1 as the primary time and store rectangle data
+	const res: Mutable<SeriesPlotRow<'Rectangle'>> = { 
+		index, 
+		time, 
+		value: [item.price1, Math.max(item.price1, item.price2), Math.min(item.price1, item.price2), item.price2], 
+		originalTime 
+	};
+
+	res.time1 = item.time1 as unknown as number;
+	res.price1 = item.price1;
+	res.time2 = item.time2 as unknown as number;
+	res.price2 = item.price2;
+
+	if (item.fillColor !== undefined) {
+		res.fillColor = item.fillColor;
+	}
+
+	if (item.borderColor !== undefined) {
+		res.borderColor = item.borderColor;
+	}
+
+	return res;
+}
+
 // The returned data is used for scaling the series, and providing the current value for the price scale
 export type CustomDataToPlotRowValueConverter<HorzScaleItem> = (item: CustomData<HorzScaleItem> | WhitespaceData) => number[];
 
@@ -140,7 +165,7 @@ function isWhitespaceDataWithCustomCheck<HorzScaleItem>(bar: SeriesDataItemTypeM
 	return isWhitespaceData(bar);
 }
 
-type GetPlotRowType = (typeof getBaselineSeriesPlotRow) | (typeof getBarSeriesPlotRow) | (typeof getCandlestickSeriesPlotRow) | (typeof getCustomSeriesPlotRow);
+type GetPlotRowType = (typeof getBaselineSeriesPlotRow) | (typeof getBarSeriesPlotRow) | (typeof getCandlestickSeriesPlotRow) | (typeof getRectangleSeriesPlotRow) | (typeof getCustomSeriesPlotRow);
 
 function wrapWhitespaceData<TSeriesType extends SeriesType, HorzScaleItem>(createPlotRowFn: GetPlotRowType): SeriesItemValueFnMap<HorzScaleItem>[TSeriesType] {
 	return (time: InternalHorzScaleItem, index: TimePointIndex, bar: SeriesDataItemTypeMap<HorzScaleItem>[SeriesType], originalTime: HorzScaleItem, dataToPlotRow?: CustomDataToPlotRowValueConverter<HorzScaleItem>, customIsWhitespace?: WhitespaceCheck<HorzScaleItem>) => {
@@ -160,6 +185,7 @@ export function getSeriesPlotRowCreator<TSeriesType extends SeriesType, HorzScal
 		Baseline: wrapWhitespaceData(getBaselineSeriesPlotRow),
 		Histogram: wrapWhitespaceData(getColoredLineBasedSeriesPlotRow),
 		Line: wrapWhitespaceData(getColoredLineBasedSeriesPlotRow),
+		Rectangle: wrapWhitespaceData(getRectangleSeriesPlotRow),
 		Custom: wrapWhitespaceData(getCustomSeriesPlotRow),
 	};
 	return seriesPlotRowFnMap[seriesType];

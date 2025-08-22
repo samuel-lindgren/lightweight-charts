@@ -177,14 +177,46 @@ export interface CandlestickData<HorzScaleItem = Time> extends OhlcData<HorzScal
 	wickColor?: string;
 }
 
+/**
+ * Structure describing a single item of data for rectangle series
+ */
+export interface RectangleData<HorzScaleItem = Time> extends WhitespaceData<HorzScaleItem> {
+	/**
+	 * Start time of the rectangle.
+	 */
+	time1: HorzScaleItem;
+	/**
+	 * Start price of the rectangle.
+	 */
+	price1: number;
+	/**
+	 * End time of the rectangle.
+	 */
+	time2: HorzScaleItem;
+	/**
+	 * End price of the rectangle.
+	 */
+	price2: number;
+	/**
+	 * Optional fill color value. When supplied, overrides the base fill color.
+	 */
+	fillColor?: string;
+	/**
+	 * Optional border color value. When supplied, overrides the base border color.
+	 */
+	borderColor?: string;
+}
+
 export function isWhitespaceData<HorzScaleItem = Time>(data: SeriesDataItemTypeMap<HorzScaleItem>[SeriesType]): data is WhitespaceData<HorzScaleItem> {
-	return (data as Partial<BarData<HorzScaleItem>>).open === undefined && (data as Partial<LineData<HorzScaleItem>>).value === undefined;
+	return (data as Partial<BarData<HorzScaleItem>>).open === undefined && 
+		   (data as Partial<LineData<HorzScaleItem>>).value === undefined &&
+		   (data as Partial<RectangleData<HorzScaleItem>>).time1 === undefined;
 }
 
 export function isFulfilledData<HorzScaleItem, T extends SeriesDataItemTypeMap<HorzScaleItem>[SeriesType]>(
 	data: T
-): data is Extract<T, BarData<HorzScaleItem> | LineData<HorzScaleItem> | HistogramData<HorzScaleItem>> {
-	return isFulfilledBarData(data) || isFulfilledLineData(data);
+): data is Extract<T, BarData<HorzScaleItem> | LineData<HorzScaleItem> | HistogramData<HorzScaleItem> | RectangleData<HorzScaleItem>> {
+	return isFulfilledBarData(data) || isFulfilledLineData(data) || isFulfilledRectangleData(data);
 }
 
 export function isFulfilledBarData<HorzScaleItem, T extends SeriesDataItemTypeMap<HorzScaleItem>[SeriesType]>(
@@ -197,6 +229,15 @@ export function isFulfilledLineData<HorzScaleItem, T extends SeriesDataItemTypeM
 	data: T
 ): data is Extract<T, LineData<HorzScaleItem> | HistogramData<HorzScaleItem>> {
 	return (data as Partial<LineData<HorzScaleItem>>).value !== undefined;
+}
+
+export function isFulfilledRectangleData<HorzScaleItem, T extends SeriesDataItemTypeMap<HorzScaleItem>[SeriesType]>(
+	data: T
+): data is Extract<T, RectangleData<HorzScaleItem>> {
+	return (data as Partial<RectangleData<HorzScaleItem>>).time1 !== undefined && 
+		   (data as Partial<RectangleData<HorzScaleItem>>).price1 !== undefined &&
+		   (data as Partial<RectangleData<HorzScaleItem>>).time2 !== undefined &&
+		   (data as Partial<RectangleData<HorzScaleItem>>).price2 !== undefined;
 }
 
 /**
@@ -229,6 +270,10 @@ export interface SeriesDataItemTypeMap<HorzScaleItem = Time> {
 	 * The types of histogram series data.
 	 */
 	Histogram: HistogramData<HorzScaleItem> | WhitespaceData<HorzScaleItem>;
+	/**
+	 * The types of rectangle series data.
+	 */
+	Rectangle: RectangleData<HorzScaleItem> | WhitespaceData<HorzScaleItem>;
 	/**
 	 * The base types of an custom series data.
 	 */

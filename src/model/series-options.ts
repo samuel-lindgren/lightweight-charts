@@ -526,6 +526,46 @@ export interface HistogramStyleOptions {
 }
 
 /**
+ * Represents style options for a rectangle series.
+ */
+export interface RectangleStyleOptions {
+	/**
+	 * Fill color of the rectangle.
+	 *
+	 * @defaultValue `'rgba(38, 166, 154, 0.2)'`
+	 */
+	fillColor: string;
+
+	/**
+	 * Border color of the rectangle.
+	 *
+	 * @defaultValue `'rgba(38, 166, 154, 1)'`
+	 */
+	borderColor: string;
+
+	/**
+	 * Border width of the rectangle.
+	 *
+	 * @defaultValue `1`
+	 */
+	borderWidth: LineWidth;
+
+	/**
+	 * Border style of the rectangle.
+	 *
+	 * @defaultValue {@link LineStyle.Solid}
+	 */
+	borderStyle: LineStyle;
+
+	/**
+	 * Whether the rectangle border is visible.
+	 *
+	 * @defaultValue `true`
+	 */
+	borderVisible: boolean;
+}
+
+/**
  * Represents style options for a custom series.
  */
 export interface CustomStyleOptions {
@@ -903,6 +943,15 @@ export type HistogramSeriesOptions = SeriesOptions<HistogramStyleOptions>;
 export type HistogramSeriesPartialOptions = SeriesPartialOptions<HistogramStyleOptions>;
 
 /**
+ * Represents rectangle series options.
+ */
+export type RectangleSeriesOptions = SeriesOptions<RectangleStyleOptions>;
+/**
+ * Represents rectangle series options where all properties are optional.
+ */
+export type RectangleSeriesPartialOptions = SeriesPartialOptions<RectangleStyleOptions>;
+
+/**
  * Represents a custom series options.
  */
 export type CustomSeriesOptions = SeriesOptions<CustomStyleOptions>;
@@ -951,6 +1000,10 @@ export interface SeriesStyleOptionsMap {
 	 */
 	Histogram: HistogramStyleOptions;
 	/**
+	 * The type of rectangle style options.
+	 */
+	Rectangle: RectangleStyleOptions;
+	/**
 	 * The type of a custom series' style options.
 	 */
 	Custom: CustomStyleOptions;
@@ -987,6 +1040,10 @@ export interface SeriesOptionsMap {
 	 */
 	Histogram: HistogramSeriesOptions;
 	/**
+	 * The type of rectangle series options.
+	 */
+	Rectangle: RectangleSeriesOptions;
+	/**
 	 * The type of a custom series options.
 	 */
 	Custom: CustomSeriesOptions;
@@ -1022,6 +1079,10 @@ export interface SeriesPartialOptionsMap {
 	 * The type of histogram series partial options.
 	 */
 	Histogram: HistogramSeriesPartialOptions;
+	/**
+	 * The type of rectangle series partial options.
+	 */
+	Rectangle: RectangleSeriesPartialOptions;
 	/**
 	 * The type of a custom series partial options.
 	 */

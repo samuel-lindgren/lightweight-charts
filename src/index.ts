@@ -30,6 +30,7 @@ export { areaSeries as AreaSeries } from './model/series/area-series';
 export { barSeries as BarSeries } from './model/series/bar-series';
 export { candlestickSeries as CandlestickSeries } from './model/series/candlestick-series';
 export { histogramSeries as HistogramSeries } from './model/series/histogram-series';
+export { rectangleSeries as RectangleSeries } from './model/series/rectangle-series';
 /*
 	Plugins
 */
@@ -37,6 +38,7 @@ export { createTextWatermark } from './plugins/text-watermark/primitive';
 export { createImageWatermark } from './plugins/image-watermark/primitive';
 export { createSeriesMarkers } from './plugins/series-markers/wrapper';
 export { createUpDownMarkers } from './plugins/up-down-markers-plugin/wrapper';
+export { createFVGRectangles } from './plugins/fvg-rectangles/index';
 
 /**
  * Returns the current version as a string. For example `'3.3.0'`.

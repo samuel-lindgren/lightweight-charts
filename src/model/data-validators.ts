@@ -2,7 +2,7 @@
 
 import { assert } from '../helpers/assertions';
 
-import { isFulfilledData, OhlcData, SeriesDataItemTypeMap } from './data-consumer';
+import { isFulfilledData, isFulfilledRectangleData, OhlcData, SeriesDataItemTypeMap } from './data-consumer';
 import { IHorzScaleBehavior } from './ihorz-scale-behavior';
 import { CreatePriceLineOptions } from './price-line-options';
 import { SeriesType } from './series-options';
@@ -55,6 +55,9 @@ export function getChecker<HorzScaleItem>(type: SeriesType): Checker<HorzScaleIt
 		case 'Histogram':
 			return checkLineItem.bind(null, type);
 
+		case 'Rectangle':
+			return checkRectangleItem.bind(null);
+
 		case 'Custom':
 			return checkCustomItem.bind(null);
 	}
@@ -105,6 +108,30 @@ function checkLineItem<HorzScaleItem>(
 			lineItem.value
 		}`
 	);
+}
+
+function checkRectangleItem<HorzScaleItem>(
+	rectangleItem: SeriesDataItemTypeMap<HorzScaleItem>['Rectangle']
+): void {
+	if (!isFulfilledRectangleData(rectangleItem)) {
+		return;
+	}
+
+	(['price1', 'price2'] as const).forEach((key) => {
+		assert(
+			typeof rectangleItem[key] === 'number',
+			`Rectangle series item data value of ${key} must be a number, got=${typeof rectangleItem[key]}, value=${
+				rectangleItem[key]
+			}`
+		);
+
+		assert(
+			isSafeValue(rectangleItem[key]),
+			`Rectangle series item data value of ${key} must be between ${MIN_SAFE_VALUE.toPrecision(16)} and ${MAX_SAFE_VALUE.toPrecision(16)}, got=${typeof rectangleItem[key]}, value=${
+				rectangleItem[key]
+			}`
+		);
+	});
 }
 
 function checkCustomItem(

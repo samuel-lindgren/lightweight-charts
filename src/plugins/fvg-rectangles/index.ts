@@ -1,0 +1,1 @@
+export { createFVGRectangles, type FVGRectangleData, type FVGRectanglePrimitiveOptions, type IFVGRectangles } from './wrapper';

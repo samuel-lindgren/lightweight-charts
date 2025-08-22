@@ -39,6 +39,7 @@ export interface SeriesDataAtTypeMap {
 	Baseline: BarPrice;
 	Line: BarPrice;
 	Histogram: BarPrice;
+	Rectangle: BarPrice;
 	Custom: BarPrice;
 }
 

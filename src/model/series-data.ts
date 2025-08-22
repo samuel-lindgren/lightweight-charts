@@ -35,6 +35,15 @@ export interface CandlestickPlotRow extends PlotRow {
 	readonly wickColor?: string;
 }
 
+export interface RectanglePlotRow extends PlotRow {
+	time1?: number;
+	price1?: number;
+	time2?: number;
+	price2?: number;
+	readonly fillColor?: string;
+	readonly borderColor?: string;
+}
+
 export interface CustomPlotRow extends PlotRow {
 	// Used to store the original data values
 	data: Record<string, unknown>;
@@ -48,6 +57,7 @@ export interface SeriesPlotRowTypeAtTypeMap {
 	Baseline: BaselinePlotRow;
 	Line: LinePlotRow;
 	Histogram: HistogramPlotRow;
+	Rectangle: RectanglePlotRow;
 	Custom: CustomPlotRow;
 }
 

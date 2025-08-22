@@ -11,6 +11,7 @@ import {
 	CustomStyleOptions,
 	HistogramStyleOptions,
 	LineStyleOptions,
+	RectangleStyleOptions,
 	SeriesOptionsMap,
 	SeriesType,
 } from './series-options';
@@ -66,6 +67,11 @@ export interface CandlesticksColorerStyle extends CommonBarColorerStyle {
 
 export interface CustomBarColorerStyle extends CommonBarColorerStyle {}
 
+export interface RectangleBarColorerStyle extends CommonBarColorerStyle {
+	fillColor: string;
+	borderColor: string;
+}
+
 export interface BarStylesMap {
 	Bar: BarColorerStyle;
 	Candlestick: CandlesticksColorerStyle;
@@ -73,6 +79,7 @@ export interface BarStylesMap {
 	Baseline: BaselineBarColorerStyle;
 	Line: LineBarColorerStyle;
 	Histogram: HistogramBarColorerStyle;
+	Rectangle: RectangleBarColorerStyle;
 	Custom: CustomBarColorerStyle;
 }
 
@@ -172,6 +179,14 @@ const barStyleFnMap: BarStylesFnMap = {
 		const currentBar = ensureNotNull(findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Histogram'>;
 		return {
 			barColor: currentBar.color ?? histogramStyle.color,
+		};
+	},
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	Rectangle: (findBar: FindBarFn, rectangleStyle: RectangleStyleOptions, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): RectangleBarColorerStyle => {
+		return {
+			barColor: rectangleStyle.fillColor,
+			fillColor: rectangleStyle.fillColor,
+			borderColor: rectangleStyle.borderColor,
 		};
 	},
 };

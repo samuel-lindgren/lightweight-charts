@@ -3940,6 +3940,7 @@ class PriceScale {
         this._private__marginBelow = 0;
         this._private__onMarksChanged = new Delegate();
         this._private__modeChanged = new Delegate();
+        this._private__rangeChanged = new Delegate();
         this._private__dataSources = [];
         this._private__formatterSource = null;
         this._private__cachedOrderedSources = null;
@@ -4093,6 +4094,12 @@ class PriceScale {
         }
         this._private__marksCache = null;
         this._private__priceRange = newPriceRange;
+        if (this._private__rangeChanged._internal_hasListeners()) {
+            const payload = (newPriceRange === null)
+                ? null
+                : { from: newPriceRange._internal_minValue(), to: newPriceRange._internal_maxValue() };
+            this._private__rangeChanged._internal_fire(payload);
+        }
     }
     _internal_setCustomPriceRange(newPriceRange) {
         this._internal_setPriceRange(newPriceRange);
@@ -4446,6 +4453,9 @@ class PriceScale {
     }
     _internal_colorParser() {
         return this._private__colorParser;
+    }
+    _internal_onRangeChanged() {
+        return this._private__rangeChanged;
     }
     _private__toggleCustomPriceRange(v) {
         this._private__isCustomPriceRange = v;
@@ -11810,6 +11820,12 @@ class PriceScaleApi {
             from: range._internal_minValue(),
             to: range._internal_maxValue(),
         };
+    }
+    subscribePriceRangeChange(handler) {
+        this._private__priceScale()._internal_onRangeChanged()._internal_subscribe(handler);
+    }
+    unsubscribePriceRangeChange(handler) {
+        this._private__priceScale()._internal_onRangeChanged()._internal_unsubscribe(handler);
     }
     setAutoScale(on) {
         this.applyOptions({ autoScale: on });

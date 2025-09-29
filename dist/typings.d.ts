@@ -2150,6 +2150,18 @@ export interface IPriceScaleApi {
 	 */
 	getVisibleRange(): IRange<number> | null;
 	/**
+	 * Subscribes to changes of the price scale visible range.
+	 *
+	 * @param handler - Handler to be called when the price scale range changes.
+	 */
+	subscribePriceRangeChange(handler: (range: IRange<number> | null) => void): void;
+	/**
+	 * Unsubscribes the provided handler from price scale range changes.
+	 *
+	 * @param handler - Handler to remove from the subscription list.
+	 */
+	unsubscribePriceRangeChange(handler: (range: IRange<number> | null) => void): void;
+	/**
 	 * Sets the auto scale mode of the price scale.
 	 *
 	 * @param on - If true, enables auto scaling; if false, disables it.
